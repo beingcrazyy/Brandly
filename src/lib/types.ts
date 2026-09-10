@@ -35,6 +35,14 @@ export interface AudienceProfile {
   behaviors: string;
 }
 
+export interface Competitor {
+  id: ID;
+  name: string;
+  /** 0-100 position on the positioning map's two axes (same axes as the brand's own dot). */
+  x: number;
+  y: number;
+}
+
 export interface Positioning {
   statement: string;
   category: string;
@@ -42,6 +50,37 @@ export interface Positioning {
   competitiveAdvantage: string;
   promise: string;
   reasonToBelieve: string;
+  competitors: Competitor[];
+}
+
+export type ArchetypeId =
+  | "innocent"
+  | "explorer"
+  | "sage"
+  | "hero"
+  | "outlaw"
+  | "magician"
+  | "everyman"
+  | "jester"
+  | "lover"
+  | "caregiver"
+  | "ruler"
+  | "creator";
+
+export interface BrandArchetype {
+  primary: ArchetypeId | null;
+  secondary: ArchetypeId | null;
+}
+
+export interface MessagingPillar {
+  id: ID;
+  title: string;
+  description: string;
+}
+
+export interface Messaging {
+  valueProposition: string;
+  pillars: MessagingPillar[];
 }
 
 export interface WritingPrinciple {
@@ -55,40 +94,6 @@ export interface Voice {
   soundsLike: string[];
   doesntSoundLike: string[];
   writingPrinciples: WritingPrinciple[];
-}
-
-export type LogoVariant =
-  | "primary"
-  | "secondary"
-  | "monogram"
-  | "symbol"
-  | "light"
-  | "dark"
-  | "horizontal"
-  | "vertical";
-
-export interface LogoAsset {
-  id: ID;
-  variant: LogoVariant;
-  name: string;
-  description: string;
-  file: FileRef | null;
-  recommendedBackground: "light" | "dark" | "brand";
-  usageNotes: string;
-}
-
-export interface IncorrectUsageExample {
-  id: ID;
-  file: FileRef | null;
-  title: string;
-  description: string;
-}
-
-export interface LogoGuidelines {
-  clearSpace: number;
-  minWidth: number;
-  minHeight: number;
-  incorrectExamples: IncorrectUsageExample[];
 }
 
 export type ColorRole = "primary" | "secondary" | "accent" | "neutral";
@@ -138,70 +143,6 @@ export interface Typography {
   styles: TypeStyle[];
 }
 
-export interface ImageExample {
-  id: ID;
-  file: FileRef | null;
-  caption: string;
-}
-
-export interface Imagery {
-  photographyStyle: string;
-  lighting: string;
-  composition: string;
-  colorTreatment: string;
-  subjects: string;
-  doExamples: ImageExample[];
-  dontExamples: ImageExample[];
-}
-
-export interface IconAsset {
-  id: ID;
-  name: string;
-  file: FileRef | null;
-}
-
-export interface Iconography {
-  style: string;
-  strokeWidth: number;
-  cornerTreatment: "sharp" | "rounded";
-  fillStyle: "outline" | "filled";
-  sizeGuidance: string;
-  usageNotes: string;
-  icons: IconAsset[];
-}
-
-export type GraphicCategory =
-  | "pattern"
-  | "texture"
-  | "shape"
-  | "illustration"
-  | "decorative";
-
-export interface GraphicElement {
-  id: ID;
-  name: string;
-  description: string;
-  category: GraphicCategory;
-  file: FileRef | null;
-}
-
-export type ApplicationCategory =
-  | "Social Media"
-  | "Stationery"
-  | "Packaging"
-  | "Website"
-  | "Advertising"
-  | "Presentation";
-
-export interface ApplicationMockup {
-  id: ID;
-  category: ApplicationCategory;
-  title: string;
-  description: string;
-  file: FileRef | null;
-  usageNotes: string;
-}
-
 export type AssetType =
   | "logo"
   | "font"
@@ -223,8 +164,7 @@ export interface LibraryAsset {
   uploadedAt: string;
 }
 
-/** "editorial" and "bold" render; the rest are locked/coming-soon placeholders in the Templates gallery. */
-export type TemplateId = "editorial" | "bold" | "minimal" | "corporate" | "luxury";
+export type TemplateId = "mono" | "studio" | "atelier" | "field" | "dusk" | "summit" | "meadow";
 
 export type ThemeMode = "light" | "dark";
 export type RadiusScale = "none" | "small" | "medium" | "large";
@@ -256,10 +196,12 @@ export interface BrandData {
   vision: string;
   story: string;
   purpose: string;
+  essence: string;
   values: BrandValue[];
 
   personalityTraits: string[];
   personalityScales: PersonalityScale[];
+  archetype: BrandArchetype;
 
   audience: {
     primary: AudienceProfile;
@@ -268,16 +210,10 @@ export interface BrandData {
 
   positioning: Positioning;
   voice: Voice;
-
-  logos: LogoAsset[];
-  logoGuidelines: LogoGuidelines;
+  messaging: Messaging;
 
   colors: ColorToken[];
   typography: Typography;
-  imagery: Imagery;
-  iconography: Iconography;
-  graphics: GraphicElement[];
-  applications: ApplicationMockup[];
   assets: LibraryAsset[];
 
   template: TemplateId;

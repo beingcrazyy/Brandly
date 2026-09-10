@@ -30,6 +30,7 @@ export function emptyBrandData(name: string, slug: string): BrandData {
     vision: "",
     story: "",
     purpose: "",
+    essence: "",
     values: [],
     personalityTraits: [],
     personalityScales: [
@@ -38,14 +39,14 @@ export function emptyBrandData(name: string, slug: string): BrandData {
       { id: makeId(), leftLabel: "Reserved", rightLabel: "Expressive", value: 50 },
       { id: makeId(), leftLabel: "Formal", rightLabel: "Casual", value: 50 },
     ],
+    archetype: { primary: null, secondary: null },
     audience: {
       primary: { name: "", ageRange: "", occupation: "", location: "", needs: "", problems: "", motivations: "", behaviors: "" },
       secondary: null,
     },
-    positioning: { statement: "", category: "", differentiator: "", competitiveAdvantage: "", promise: "", reasonToBelieve: "" },
+    positioning: { statement: "", category: "", differentiator: "", competitiveAdvantage: "", promise: "", reasonToBelieve: "", competitors: [] },
     voice: { voice: "", soundsLike: [], doesntSoundLike: [], writingPrinciples: [] },
-    logos: [],
-    logoGuidelines: { clearSpace: 24, minWidth: 32, minHeight: 32, incorrectExamples: [] },
+    messaging: { valueProposition: "", pillars: [] },
     colors: [],
     typography: {
       primary: { family: "Inter", source: "google", file: null, weights: [400, 500, 600] },
@@ -61,13 +62,29 @@ export function emptyBrandData(name: string, slug: string): BrandData {
         { id: makeId(), name: "Caption", fontRef: "secondary", weight: 500, size: 12, lineHeight: 1.4, letterSpacing: 0.04, usage: "Labels, metadata" },
       ],
     },
-    imagery: { photographyStyle: "", lighting: "", composition: "", colorTreatment: "", subjects: "", doExamples: [], dontExamples: [] },
-    iconography: { style: "", strokeWidth: 1.5, cornerTreatment: "rounded", fillStyle: "outline", sizeGuidance: "", usageNotes: "", icons: [] },
-    graphics: [],
-    applications: [],
     assets: [],
-    template: "editorial",
+    template: "mono",
     templateConfig: { mode: "light", radius: "small", spacing: "comfortable", navStyle: "sidebar", accentTreatment: "solid" },
+  };
+}
+
+/** Backfills fields added to BrandData after some brands were already persisted to localStorage — without this, older saved brands crash on the new fields instead of just defaulting them. */
+function migrateBrandData(data: BrandData): BrandData {
+  const base = emptyBrandData(data.name, data.slug);
+  return {
+    ...base,
+    ...data,
+    positioning: { ...base.positioning, ...data.positioning },
+    archetype: { ...base.archetype, ...data.archetype },
+    messaging: { ...base.messaging, ...data.messaging },
+  };
+}
+
+function migrateBrand(brand: Brand): Brand {
+  return {
+    ...brand,
+    draftData: migrateBrandData(brand.draftData),
+    publishedData: brand.publishedData ? migrateBrandData(brand.publishedData) : null,
   };
 }
 
@@ -156,6 +173,11 @@ export const useBrandStore = create<BrandStore>()(
     {
       name: "brandly-data",
       partialize: (state) => ({ brands: state.brands, seeded: state.seeded }),
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as Partial<Pick<BrandStore, "brands" | "seeded">> | undefined;
+        if (!persisted?.brands) return currentState;
+        return { ...currentState, ...persisted, brands: persisted.brands.map(migrateBrand) };
+      },
     }
   )
 );

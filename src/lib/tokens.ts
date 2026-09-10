@@ -43,6 +43,7 @@ export function buildTokens(data: BrandData): Record<string, string> {
     "--brand-primary": primary,
     "--brand-secondary": secondary,
     "--brand-accent": accent,
+    "--brand-neutral": neutral ?? primary,
     "--brand-background": background,
     "--brand-text": text,
     "--brand-muted": muted,

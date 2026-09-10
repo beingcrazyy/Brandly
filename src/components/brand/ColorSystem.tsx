@@ -8,10 +8,13 @@ export function ColorSystem({
   colors,
   onSelect,
   onAdd,
+  variant = "lab",
 }: {
   colors: ColorToken[];
   onSelect: (color: ColorToken) => void;
   onAdd?: () => void;
+  /** "lab" (CMS) keeps Brandly's own serif label; "portal" (public templates) is sans-only. */
+  variant?: "lab" | "portal";
 }) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
@@ -29,7 +32,7 @@ export function ColorSystem({
               {color.role}
             </span>
             <div>
-              <p className="font-serif text-[16px] font-medium" style={{ color: light ? "#14140F" : "#F6F4EE" }}>
+              <p className={`text-[16px] font-medium ${variant === "lab" ? "font-serif" : ""}`} style={{ color: light ? "#14140F" : "#F6F4EE" }}>
                 {color.name}
               </p>
               <p className="font-mono text-[11px] opacity-70" style={{ color: light ? "#14140F" : "#F6F4EE" }}>

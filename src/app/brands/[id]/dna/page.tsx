@@ -15,7 +15,7 @@ export default function DnaPage() {
   const notify = useToast();
   const { brand, value, setValue, dirty, save } = useSectionForm(
     id,
-    (d) => ({ purpose: d.purpose, values: d.values }),
+    (d) => ({ purpose: d.purpose, essence: d.essence, values: d.values }),
     (d, v) => ({ ...d, ...v })
   );
 
@@ -34,6 +34,10 @@ export default function DnaPage() {
     >
       <FieldGroup title="Live Preview" description="How this reads on the published portal — click a node to explore it.">
         <BrandDNADiagram data={brand.draftData} />
+      </FieldGroup>
+
+      <FieldGroup title="Brand Essence" description="A two-to-four word distillation of the brand — the line everything else ladders up to.">
+        <Input value={value.essence} onChange={(e) => setValue({ ...value, essence: e.target.value })} placeholder="e.g. Fewer, better." />
       </FieldGroup>
 
       <FieldGroup title="Purpose" description="Why the brand exists, beyond making money.">

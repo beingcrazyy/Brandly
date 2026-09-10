@@ -21,40 +21,10 @@ const STONE = "#77736D";
 export async function buildAuraBrand(): Promise<Brand> {
   const now = "2026-08-12T10:46:00.000Z";
 
-  const [wordmark, wordmarkLight, monogram, symbol, coverImage] = await Promise.all([
-    storeSvg(gen.wordmarkLogo(INK), "aura-wordmark-primary.svg"),
-    storeSvg(gen.wordmarkLogo(BONE), "aura-wordmark-light.svg"),
-    storeSvg(gen.monogramLogo(INK), "aura-monogram.svg"),
-    storeSvg(gen.symbolMark(INK), "aura-symbol.svg"),
+  const [coverImage, pattern, texture] = await Promise.all([
     storeSvg(gen.coverImage(INK, LINEN, CLAY), "aura-cover.svg"),
-  ]);
-
-  const [stretchEx, recolorEx, busyEx] = await Promise.all([
-    storeSvg(gen.incorrectUsageExample("stretch", INK, CLAY), "incorrect-stretch.svg"),
-    storeSvg(gen.incorrectUsageExample("recolor", INK, CLAY), "incorrect-recolor.svg"),
-    storeSvg(gen.incorrectUsageExample("busy", INK, CLAY), "incorrect-busy.svg"),
-  ]);
-
-  const [pattern, texture, shape, illustration, decorative] = await Promise.all([
     storeSvg(gen.patternTile(CLAY, LINEN), "pattern-dot-grid.svg"),
     storeSvg(gen.textureTile(INK, LINEN), "texture-grain.svg"),
-    storeSvg(gen.shapeMotif(CLAY), "shape-motif.svg"),
-    storeSvg(gen.illustrationMark(INK, CLAY), "illustration-bottle.svg"),
-    storeSvg(gen.decorativeRings(INK), "decorative-rings.svg"),
-  ]);
-
-  const iconEntries = await Promise.all(
-    gen.ICON_NAMES.map(async (name) => ({
-      id: id(),
-      name: name[0].toUpperCase() + name.slice(1),
-      file: await storeSvg(gen.iconSvg(name, INK, 1.5, false), `icon-${name}.svg`),
-    }))
-  );
-
-  const [socialPost, businessCard, packaging] = await Promise.all([
-    storeSvg(gen.socialMockup("AURA", INK, LINEN, CLAY), "application-social-post.svg"),
-    storeSvg(gen.stationeryMockup(INK, LINEN, CLAY), "application-business-card.svg"),
-    storeSvg(gen.packagingMockup(INK, LINEN, CLAY), "application-packaging.svg"),
   ]);
 
   const draftData: BrandData = {
@@ -75,6 +45,7 @@ export async function buildAuraBrand(): Promise<Brand> {
       "AURA started with a simple frustration: a bathroom shelf of eleven products, most of them barely touched. Our founder, a former cosmetic chemist, set out to prove that four well-formulated products could outperform twelve mediocre ones. Three years and ninety clinical reformulation cycles later, AURA launched with a four-product system — and a promise to never add a fifth without a very good reason.",
     purpose:
       "We exist to give people their mornings back, without asking them to compromise on results.",
+    essence: "Fewer, better.",
     values: [
       { id: id(), name: "Clarity", description: "We make complex ideas simple. Skincare shouldn't require a chemistry degree." },
       { id: id(), name: "Restraint", description: "We say no to more ingredients, more steps, more noise — so the essentials can do their job." },
@@ -89,6 +60,7 @@ export async function buildAuraBrand(): Promise<Brand> {
       { id: id(), leftLabel: "Reserved", rightLabel: "Expressive", value: 42 },
       { id: id(), leftLabel: "Formal", rightLabel: "Casual", value: 56 },
     ],
+    archetype: { primary: "sage", secondary: "everyman" },
 
     audience: {
       primary: {
@@ -121,6 +93,12 @@ export async function buildAuraBrand(): Promise<Brand> {
       competitiveAdvantage: "An in-house formulation lab with a 90-day reformulation cycle based on direct customer testing panels.",
       promise: "Fewer products. Better skin. No compromises.",
       reasonToBelieve: "Dermatologist-reviewed formulas, third-party clinical testing, and full ingredient transparency on every product page.",
+      competitors: [
+        { id: id(), name: "Drugstore Basics", x: 20, y: 25 },
+        { id: id(), name: "Clinical Rx", x: 85, y: 60 },
+        { id: id(), name: "Ritual Aesthetics", x: 72, y: 88 },
+        { id: id(), name: "Glow Habit", x: 40, y: 70 },
+      ],
     },
 
     voice: {
@@ -134,20 +112,13 @@ export async function buildAuraBrand(): Promise<Brand> {
       ],
     },
 
-    logos: [
-      { id: id(), variant: "primary", name: "Primary Wordmark", description: "The default lockup for light backgrounds.", file: wordmark, recommendedBackground: "light", usageNotes: "Use whenever possible. Minimum clear space equal to the mark's radius on all sides." },
-      { id: id(), variant: "light", name: "Light Wordmark", description: "Reversed lockup for dark or brand-colored backgrounds.", file: wordmarkLight, recommendedBackground: "dark", usageNotes: "Use on Ink or any surface darker than 40% luminance." },
-      { id: id(), variant: "monogram", name: "Monogram", description: "Circular monogram for avatars and small-format placement.", file: monogram, recommendedBackground: "light", usageNotes: "Use below 32px width where the full wordmark is illegible." },
-      { id: id(), variant: "symbol", name: "Symbol", description: "The concentric halo mark, used sparingly as a standalone motif.", file: symbol, recommendedBackground: "brand", usageNotes: "Never use as a substitute for the logo in identifying contexts — decorative use only." },
-    ],
-    logoGuidelines: {
-      clearSpace: 24,
-      minWidth: 32,
-      minHeight: 32,
-      incorrectExamples: [
-        { id: id(), file: stretchEx, title: "Don't stretch or distort", description: "The mark must always retain its original proportions." },
-        { id: id(), file: recolorEx, title: "Don't recolor the mark", description: "Use only approved logo colors — never an accent or arbitrary color." },
-        { id: id(), file: busyEx, title: "Don't place on busy backgrounds", description: "Keep the logo on a clear, low-contrast field so it stays legible." },
+    messaging: {
+      valueProposition:
+        "Skincare that respects your time: four dermatologist-reviewed formulas that do the work of twelve.",
+      pillars: [
+        { id: id(), title: "Fewer, Better Formulas", description: "Four multi-functional products replace a twelve-step routine, without cutting corners on results." },
+        { id: id(), title: "Proof Over Promises", description: "Every claim is backed by third-party clinical testing and full ingredient transparency." },
+        { id: id(), title: "Considered, Not Clinical", description: "Formulated with rigor, written like a trusted friend — never cold, never jargon-heavy." },
       ],
     },
 
@@ -174,57 +145,13 @@ export async function buildAuraBrand(): Promise<Brand> {
       ],
     },
 
-    imagery: {
-      photographyStyle: "Soft, tactile, and unstyled — skin, water, and raw ingredients photographed close and honestly.",
-      lighting: "Natural, diffused daylight. Avoid hard studio shadows or artificial ring-light catchlights.",
-      composition: "Generous negative space, off-center subjects, editorial cropping over centered product shots.",
-      colorTreatment: "Warm, slightly desaturated grade that pulls toward Linen and Clay rather than cool blues.",
-      subjects: "Real skin texture, single ingredients (clay, water, botanicals), quiet domestic moments.",
-      doExamples: [
-        { id: id(), file: pattern, caption: "Warm, minimal, ingredient-forward" },
-        { id: id(), file: texture, caption: "Soft grain, diffused natural light" },
-      ],
-      dontExamples: [
-        { id: id(), file: recolorEx, caption: "Oversaturated or artificially lit" },
-        { id: id(), file: stretchEx, caption: "Distorted or heavily filtered" },
-      ],
-    },
-
-    iconography: {
-      style: "Single-weight line icons with softly rounded joins — never fully filled.",
-      strokeWidth: 1.5,
-      cornerTreatment: "rounded",
-      fillStyle: "outline",
-      sizeGuidance: "Design on a 32px grid; minimum display size 16px.",
-      usageNotes: "Icons pair with Caption-style labels. Never mix outline and filled icons in the same view.",
-      icons: iconEntries,
-    },
-
-    graphics: [
-      { id: id(), name: "Dot Grid", description: "Quiet background pattern for section dividers.", category: "pattern", file: pattern },
-      { id: id(), name: "Paper Grain", description: "Subtle texture overlay for large color fields.", category: "texture", file: texture },
-      { id: id(), name: "Soft Blob", description: "Organic shape motif echoing the product silhouette.", category: "shape", file: shape },
-      { id: id(), name: "Bottle Line Art", description: "Minimal illustration used in packaging call-outs.", category: "illustration", file: illustration },
-      { id: id(), name: "Halo Rings", description: "The brand's concentric-ring motif, used decoratively.", category: "decorative", file: decorative },
-    ],
-
-    applications: [
-      { id: id(), category: "Social Media", title: "Instagram Grid Post", description: "Product-forward social template using the halo mark.", file: socialPost, usageNotes: "Keep 12% margin; never crop the halo mark." },
-      { id: id(), category: "Stationery", title: "Business Card", description: "Founder business card, Linen stock, Clay foil edge.", file: businessCard, usageNotes: "Print on uncoated 100lb stock for the intended tactile feel." },
-      { id: id(), category: "Packaging", title: "Renew Serum Carton", description: "Primary packaging system for the flagship serum.", file: packaging, usageNotes: "Ink carton with Linen label; monogram embossed, not printed." },
-    ],
-
     assets: [
-      { id: id(), name: "Primary Wordmark (SVG)", type: "logo", category: "Logos", description: "Vector wordmark for print and web.", file: wordmark, uploadedAt: now },
-      { id: id(), name: "Light Wordmark (SVG)", type: "logo", category: "Logos", description: "Reversed wordmark for dark surfaces.", file: wordmarkLight, uploadedAt: now },
-      { id: id(), name: "Monogram (SVG)", type: "logo", category: "Logos", description: "Circular monogram mark.", file: monogram, uploadedAt: now },
-      { id: id(), name: "Icon Set (5 icons)", type: "icon", category: "Icons", description: "Line icon set, 1.5px stroke.", file: iconEntries[0].file, uploadedAt: now },
-      { id: id(), name: "Halo Rings Motif", type: "illustration", category: "Graphics", description: "Decorative concentric-ring graphic.", file: decorative, uploadedAt: now },
-      { id: id(), name: "Instagram Post Template", type: "social", category: "Applications", description: "Square social template with brand lockup.", file: socialPost, uploadedAt: now },
-      { id: id(), name: "Business Card Mockup", type: "presentation", category: "Applications", description: "Founder business card mockup.", file: businessCard, uploadedAt: now },
+      { id: id(), name: "Cover Image (SVG)", type: "photography", category: "Brand", description: "Primary cover image used across the portal.", file: coverImage, uploadedAt: now },
+      { id: id(), name: "Dot Grid Pattern", type: "illustration", category: "Graphics", description: "Quiet background pattern for section dividers.", file: pattern, uploadedAt: now },
+      { id: id(), name: "Paper Grain Texture", type: "illustration", category: "Graphics", description: "Subtle texture overlay for large color fields.", file: texture, uploadedAt: now },
     ],
 
-    template: "editorial",
+    template: "mono",
     templateConfig: {
       mode: "light",
       radius: "small",

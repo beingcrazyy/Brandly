@@ -5,18 +5,21 @@ import { useSectionForm } from "@/lib/useSectionForm";
 import { SectionShell } from "@/components/cms/SectionShell";
 import { FieldGroup } from "@/components/cms/FieldGroup";
 import { Textarea, Input } from "@/components/ui/Field";
+import { RepeatableList } from "@/components/ui/RepeatableList";
 import { useToast } from "@/components/ui/Toast";
+import { makeFileId } from "@/lib/files";
+import { PositioningMap } from "@/components/brand/PositioningMap";
 
 export default function PositioningPage() {
   const { id } = useParams<{ id: string }>();
   const notify = useToast();
-  const { value, setValue, dirty, save } = useSectionForm(
+  const { brand, value, setValue, dirty, save } = useSectionForm(
     id,
     (d) => d.positioning,
     (d, v) => ({ ...d, positioning: v })
   );
 
-  if (!value) return null;
+  if (!value || !brand) return null;
 
   return (
     <SectionShell
@@ -50,6 +53,42 @@ export default function PositioningPage() {
       </FieldGroup>
       <FieldGroup title="Reason to Believe">
         <Textarea value={value.reasonToBelieve} onChange={(e) => setValue({ ...value, reasonToBelieve: e.target.value })} rows={2} />
+      </FieldGroup>
+
+      <FieldGroup title="Live Preview" description="Where this brand and its named competitors sit on the map — click the highlighted dot for detail.">
+        <PositioningMap data={{ ...brand.draftData, positioning: value }} />
+      </FieldGroup>
+
+      <FieldGroup title="Competitive Landscape" description="Plot named competitors on the same two axes as Personality (0 = left label, 100 = right label) to see where this brand sits relative to them.">
+        <RepeatableList
+          items={value.competitors}
+          onChange={(competitors) => setValue({ ...value, competitors })}
+          makeItem={() => ({ id: makeFileId(), name: "", x: 50, y: 50 })}
+          addLabel="Add Competitor"
+          renderItem={(item, _i, update) => (
+            <div className="grid grid-cols-[1fr_auto_auto] gap-3">
+              <Input placeholder="Competitor name" value={item.name} onChange={(e) => update({ name: e.target.value })} />
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                className="w-20 text-center"
+                value={item.x}
+                onChange={(e) => update({ x: Math.min(100, Math.max(0, Number(e.target.value))) })}
+                title="Position on the first personality axis (0-100)"
+              />
+              <Input
+                type="number"
+                min={0}
+                max={100}
+                className="w-20 text-center"
+                value={item.y}
+                onChange={(e) => update({ y: Math.min(100, Math.max(0, Number(e.target.value))) })}
+                title="Position on the second personality axis (0-100)"
+              />
+            </div>
+          )}
+        />
       </FieldGroup>
     </SectionShell>
   );

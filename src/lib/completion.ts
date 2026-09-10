@@ -8,18 +8,18 @@ export interface CompletionCheck {
 
 export const COMPLETION_CHECKS: CompletionCheck[] = [
   { slug: "overview", label: "Overview", isComplete: (d) => !!(d.description && d.tagline) },
-  { slug: "dna", label: "Brand DNA", isComplete: (d) => !!d.purpose && d.values.length > 0 },
+  { slug: "dna", label: "Foundation", isComplete: (d) => !!d.purpose && d.values.length > 0 },
   { slug: "positioning", label: "Positioning", isComplete: (d) => !!d.positioning.statement },
   { slug: "audience", label: "Audience", isComplete: (d) => !!d.audience.primary.name },
   { slug: "personality", label: "Personality", isComplete: (d) => d.personalityTraits.length > 0 },
+  { slug: "archetype", label: "Archetype", isComplete: (d) => !!d.archetype.primary },
   { slug: "voice", label: "Voice & Tone", isComplete: (d) => !!d.voice.voice },
-  { slug: "logo", label: "Logo", isComplete: (d) => d.logos.length > 0 },
-  { slug: "colors", label: "Colors", isComplete: (d) => d.colors.length > 0 },
-  { slug: "typography", label: "Typography", isComplete: (d) => d.typography.primary.family.trim().length > 0 },
-  { slug: "imagery", label: "Imagery", isComplete: (d) => !!d.imagery.photographyStyle || d.imagery.doExamples.length > 0 },
-  { slug: "iconography", label: "Iconography", isComplete: (d) => d.iconography.icons.length > 0 },
-  { slug: "graphics", label: "Graphics", isComplete: (d) => d.graphics.length > 0 },
-  { slug: "applications", label: "Applications", isComplete: (d) => d.applications.length > 0 },
+  { slug: "messaging", label: "Messaging", isComplete: (d) => !!d.messaging.valueProposition },
+  {
+    slug: "visual-direction",
+    label: "Visual Direction",
+    isComplete: (d) => d.colors.length > 0 && d.typography.primary.family.trim().length > 0,
+  },
   { slug: "assets", label: "Assets", isComplete: (d) => d.assets.length > 0 },
   { slug: "template", label: "Template", isComplete: (d) => !!d.template },
 ];

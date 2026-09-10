@@ -6,14 +6,17 @@ import { SectionShell } from "@/components/cms/SectionShell";
 import { FieldGroup } from "@/components/cms/FieldGroup";
 import { useToast } from "@/components/ui/Toast";
 import { TemplateId } from "@/lib/types";
-import { Check, Lock } from "lucide-react";
+import { Check } from "lucide-react";
 
 const AVAILABLE: { id: TemplateId; name: string; blurb: string; bg: string; fg: string }[] = [
-  { id: "editorial", name: "Editorial", blurb: "Large typography, generous whitespace, asymmetric grid. Quiet and literary.", bg: "#1D1D1B", fg: "#F4F0E8" },
-  { id: "bold", name: "Bold", blurb: "Full-bleed color blocks, oversized type, high contrast. Graphic and confident.", bg: "#B66A50", fg: "#FFFFFF" },
+  { id: "mono", name: "Mono", blurb: "Minimal, monochrome, hairline borders. Quiet confidence, sans-serif throughout.", bg: "#14140F", fg: "#F6F4EE" },
+  { id: "studio", name: "Studio", blurb: "Full-bleed color blocks, bold uppercase type, elevated cards. Vivid and confident.", bg: "#B66A50", fg: "#FFFFFF" },
+  { id: "atelier", name: "Atelier", blurb: "Warm, soft, boutique. Glass panels and gentle rhythm — still entirely sans-serif.", bg: "#F4F0E8", fg: "#1D1D1B" },
+  { id: "field", name: "Field", blurb: "Field-notebook editorial. Hard ink borders, offset shadows, a waypoint trail rail.", bg: "#F2F3EF", fg: "#15181A" },
+  { id: "dusk", name: "Dusk", blurb: "Dark, technical, one bright accent. Boxy hairline cards on a near-black canvas.", bg: "#0B0B0D", fg: "#F2F1EE" },
+  { id: "summit", name: "Summit", blurb: "Quiet hairline minimalism, a serif wordmark, field-coded sections. No shadows, no noise.", bg: "#FAFAF7", fg: "#1D1D1B" },
+  { id: "meadow", name: "Meadow", blurb: "Warm, soft, rounded. Drifting color-wash orbs and paper-cutout cards.", bg: "#F6F1E7", fg: "#3A2E22" },
 ];
-
-const LOCKED: TemplateId[] = ["minimal", "corporate", "luxury"];
 
 export default function TemplatePage() {
   const { id } = useParams<{ id: string }>();
@@ -38,7 +41,7 @@ export default function TemplatePage() {
       width="max-w-3xl"
     >
       <FieldGroup title="Available Templates">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {AVAILABLE.map((t) => {
             const active = value.template === t.id;
             return (
@@ -59,7 +62,7 @@ export default function TemplatePage() {
                       </span>
                     )}
                   </div>
-                  <p className="font-serif text-[26px] leading-tight">Aa</p>
+                  <p className="text-[26px] leading-tight font-bold">Aa</p>
                 </div>
                 <div className="p-4">
                   <p className="text-[14px] font-semibold text-[#14140F]">{t.name}</p>
@@ -68,21 +71,6 @@ export default function TemplatePage() {
               </button>
             );
           })}
-        </div>
-      </FieldGroup>
-
-      <FieldGroup title="Coming Soon">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {LOCKED.map((id) => (
-            <div key={id} className="flex flex-col overflow-hidden rounded-2xl border border-dashed border-[#DDD6C6] bg-black/[0.015]">
-              <div className="flex aspect-[4/3] items-center justify-center text-neutral-300">
-                <Lock size={18} strokeWidth={1.5} />
-              </div>
-              <div className="p-4">
-                <p className="text-[13px] font-medium text-neutral-400 capitalize">{id}</p>
-              </div>
-            </div>
-          ))}
         </div>
       </FieldGroup>
     </SectionShell>

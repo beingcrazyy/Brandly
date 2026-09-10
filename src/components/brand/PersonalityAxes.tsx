@@ -1,7 +1,10 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { PersonalityScale } from "@/lib/types";
+import { SPRING_SNAPPY } from "@/lib/motion";
+import { GrainOverlay } from "../ui/GrainOverlay";
 
 interface Props {
   scale: PersonalityScale;
@@ -69,8 +72,12 @@ export function PersonalityAxes({ scale, editable = false, onChange, onLabelChan
   const nearLabel = scale.value >= 50 ? scale.rightLabel : scale.leftLabel;
   const showTooltip = hovering || dragging;
 
+  const isPortal = !editable;
+
   return (
-    <div className="flex flex-col gap-3">
+    <div className="relative flex flex-col gap-3">
+      {/* No overflow-hidden here: the value tooltip pops up above the track and must not be clipped. */}
+      {isPortal && <GrainOverlay opacity={0.03} className="rounded-[10px]" />}
       <div className="flex items-center justify-between gap-3">
         {editable ? (
           <input
@@ -102,8 +109,15 @@ export function PersonalityAxes({ scale, editable = false, onChange, onLabelChan
         className={`relative h-2 rounded-full ${editable ? "cursor-pointer" : ""}`}
         style={{ backgroundColor: track }}
       >
-        <div className="absolute inset-y-0 left-0 rounded-full opacity-40" style={{ width: `${scale.value}%`, backgroundColor: accent }} />
-        <button
+        <div
+          className="absolute inset-y-0 left-0 rounded-full opacity-40"
+          style={{
+            width: `${scale.value}%`,
+            background: isPortal ? `linear-gradient(90deg, color-mix(in srgb, ${accent} 55%, transparent), ${accent})` : accent,
+            boxShadow: `0 0 12px color-mix(in srgb, ${accent} 60%, transparent)`,
+          }}
+        />
+        <motion.button
           type="button"
           onPointerDown={onHandlePointerDown}
           onPointerMove={onHandlePointerMove}
@@ -120,10 +134,18 @@ export function PersonalityAxes({ scale, editable = false, onChange, onLabelChan
           aria-valuenow={scale.value}
           aria-label={`${scale.leftLabel} to ${scale.rightLabel}`}
           tabIndex={0}
-          className={`focus-ring absolute top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow transition-transform ${
+          animate={{ scale: dragging ? 1.25 : hovering ? 1.1 : 1 }}
+          transition={SPRING_SNAPPY}
+          className={`focus-ring absolute top-1/2 left-0 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white transition-shadow duration-200 ${
             editable ? "cursor-grab touch-none active:cursor-grabbing" : "cursor-default"
-          } ${dragging ? "scale-110" : ""}`}
-          style={{ left: `${scale.value}%`, backgroundColor: accent }}
+          }`}
+          style={{
+            left: `${scale.value}%`,
+            background: isPortal ? `radial-gradient(circle at 32% 28%, color-mix(in srgb, ${accent} 88%, var(--brand-background) 12%), ${accent} 78%)` : accent,
+            boxShadow: showTooltip
+              ? `0 0 0 8px color-mix(in srgb, ${accent} 22%, transparent), 0 2px 6px rgba(0,0,0,0.25)`
+              : "0 2px 6px rgba(0,0,0,0.25)",
+          }}
         />
         {showTooltip && (
           <div

@@ -18,13 +18,12 @@ export function BrandCard({ brand }: { brand: Brand }) {
   const router = useRouter();
   const deleteBrand = useBrandStore((s) => s.deleteBrand);
   const data = brand.draftData;
-  const logo = data.logos.find((l) => l.variant === "primary")?.file ?? data.coverImage;
   const completion = computeCompletion(data);
 
   return (
     <div className="group flex flex-col overflow-hidden rounded-2xl border border-[#E4DFD3] bg-white transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(20,20,15,0.08)]">
       <Link href={`/brands/${brand.id}/overview`} className="block aspect-[16/9] overflow-hidden border-b border-[#E4DFD3] bg-black/[0.02]">
-        <FilePreview file={logo} alt={data.name} className="p-8 transition-transform duration-500 group-hover:scale-[1.04]" />
+        <FilePreview file={data.coverImage} alt={data.name} className="p-8 transition-transform duration-500 group-hover:scale-[1.04]" />
       </Link>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-start justify-between gap-2">
