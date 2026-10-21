@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { useBrandStore } from "@/lib/store";
 import { BrandlyMark } from "@/components/BrandlyMark";
 import { Drawer } from "@/components/ui/Drawer";
-import { LayoutGrid, Sparkles, Compass, ArrowUpRight, Menu } from "lucide-react";
+import { LayoutGrid, Sparkles, Compass, ArrowUpRight, Menu, LogOut } from "lucide-react";
 import type { Brand } from "@/lib/types";
 
 const NAV = [
@@ -21,7 +21,19 @@ const BREADCRUMB_LABEL: Record<string, string> = {
   "/templates": "Templates",
 };
 
-function SidebarContent({ pathname, currentSystem, onNavigate }: { pathname: string; currentSystem: Brand | null; onNavigate?: () => void }) {
+function SidebarContent({
+  pathname,
+  currentSystem,
+  onNavigate,
+  onLogout,
+  email,
+}: {
+  pathname: string;
+  currentSystem: Brand | null;
+  onNavigate?: () => void;
+  onLogout: () => void;
+  email: string;
+}) {
   return (
     <div className="flex h-full flex-col justify-between py-6">
       <div>
@@ -87,11 +99,20 @@ function SidebarContent({ pathname, currentSystem, onNavigate }: { pathname: str
       </div>
 
       <div className="flex items-center gap-2.5 px-6">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#14140F] text-[11px] font-medium text-white">AK</div>
-        <div>
-          <p className="text-[13px] font-medium text-[#14140F]">Anshu Khandelwal</p>
-          <p className="text-[11px] text-neutral-500">Studio owner</p>
+        <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#14140F] text-[11px] font-medium text-white">
+          {email.slice(0, 2).toUpperCase()}
         </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[13px] font-medium text-[#14140F]">{email}</p>
+          <p className="text-[11px] text-neutral-500">Agency</p>
+        </div>
+        <button
+          onClick={onLogout}
+          aria-label="Sign out"
+          className="focus-ring flex-shrink-0 rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-black/5 hover:text-neutral-700"
+        >
+          <LogOut size={15} />
+        </button>
       </div>
     </div>
   );
@@ -99,24 +120,46 @@ function SidebarContent({ pathname, currentSystem, onNavigate }: { pathname: str
 
 export default function AgencyLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
   const brands = useBrandStore((s) => s.brands);
+  const authUser = useBrandStore((s) => s.authUser);
+  const logout = useBrandStore((s) => s.logout);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (!authUser || authUser.role !== "agency") {
+      router.replace("/login/company");
+    }
+  }, [authUser, router]);
 
   const currentSystem = useMemo(() => {
     if (brands.length === 0) return null;
     return [...brands].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
   }, [brands]);
 
+  if (!authUser || authUser.role !== "agency") return null;
+
   const crumb = BREADCRUMB_LABEL[pathname] ?? "Workspace";
+
+  function handleLogout() {
+    logout();
+    router.replace("/login/company");
+  }
 
   return (
     <div className="flex min-h-screen">
       <aside className="sticky top-0 hidden h-screen w-64 flex-shrink-0 overflow-y-auto border-r border-[#E4DFD3] lg:block">
-        <SidebarContent pathname={pathname} currentSystem={currentSystem} />
+        <SidebarContent pathname={pathname} currentSystem={currentSystem} onLogout={handleLogout} email={authUser.email} />
       </aside>
 
       <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <SidebarContent pathname={pathname} currentSystem={currentSystem} onNavigate={() => setDrawerOpen(false)} />
+        <SidebarContent
+          pathname={pathname}
+          currentSystem={currentSystem}
+          onNavigate={() => setDrawerOpen(false)}
+          onLogout={handleLogout}
+          email={authUser.email}
+        />
       </Drawer>
 
       <div className="flex min-w-0 flex-1 flex-col">
@@ -138,7 +181,7 @@ export default function AgencyLayout({ children }: { children: React.ReactNode }
             <span className="hidden items-center gap-1.5 rounded-full border border-[#DDD6C6] px-2.5 py-1 text-[11px] font-medium text-neutral-500 sm:inline-flex">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-600" /> Studio mode
             </span>
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#14140F] text-[10.5px] font-medium text-white lg:hidden">AK</div>
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-[#14140F] text-[10.5px] font-medium text-white lg:hidden">{authUser.email.slice(0, 2).toUpperCase()}</div>
           </div>
         </header>
         <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 lg:px-10">{children}</main>

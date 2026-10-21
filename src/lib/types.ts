@@ -154,14 +154,24 @@ export type AssetType =
   | "document"
   | "misc";
 
+export interface AssetVariant {
+  id: ID;
+  label: string;
+  file: FileRef;
+  addedAt: string;
+}
+
 export interface LibraryAsset {
   id: ID;
   name: string;
   type: AssetType;
   category: string;
   description: string;
-  file: FileRef | null;
+  coverFile: FileRef | null;
+  variants: AssetVariant[];
   uploadedAt: string;
+  folderId?: string;
+  uploadedBy?: string;
 }
 
 export type TemplateId = "mono" | "studio" | "atelier" | "field" | "dusk" | "summit" | "meadow";
@@ -181,6 +191,26 @@ export interface TemplateConfig {
 }
 
 export type BrandStatus = "draft" | "published";
+
+export type UserRole = "agency" | "client";
+
+export interface AuthUser {
+  email: string;
+  role: UserRole;
+}
+
+export interface ClientAccess {
+  email: string;
+  brandId: string;
+  grantedAt: string;
+  grantedBy: string;
+}
+
+export interface AssetFolder {
+  id: ID;
+  name: string;
+  createdAt: string;
+}
 
 /** Everything that is rendered by a template. Lives twice per brand: draftData (CMS/preview) and publishedData (client portal). */
 export interface BrandData {
@@ -215,6 +245,7 @@ export interface BrandData {
   colors: ColorToken[];
   typography: Typography;
   assets: LibraryAsset[];
+  assetFolders: AssetFolder[];
 
   template: TemplateId;
   templateConfig: TemplateConfig;

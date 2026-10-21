@@ -146,10 +146,11 @@ export async function buildAuraBrand(): Promise<Brand> {
     },
 
     assets: [
-      { id: id(), name: "Cover Image (SVG)", type: "photography", category: "Brand", description: "Primary cover image used across the portal.", file: coverImage, uploadedAt: now },
-      { id: id(), name: "Dot Grid Pattern", type: "illustration", category: "Graphics", description: "Quiet background pattern for section dividers.", file: pattern, uploadedAt: now },
-      { id: id(), name: "Paper Grain Texture", type: "illustration", category: "Graphics", description: "Subtle texture overlay for large color fields.", file: texture, uploadedAt: now },
+      { id: id(), name: "Cover Image", type: "photography", category: "Brand", description: "Primary cover image used across the portal.", coverFile: coverImage, variants: [{ id: id(), label: "SVG", file: coverImage, addedAt: now }], uploadedAt: now },
+      { id: id(), name: "Dot Grid Pattern", type: "illustration", category: "Graphics", description: "Quiet background pattern for section dividers.", coverFile: pattern, variants: [{ id: id(), label: "SVG", file: pattern, addedAt: now }], uploadedAt: now },
+      { id: id(), name: "Paper Grain Texture", type: "illustration", category: "Graphics", description: "Subtle texture overlay for large color fields.", coverFile: texture, variants: [{ id: id(), label: "SVG", file: texture, addedAt: now }], uploadedAt: now },
     ],
+    assetFolders: [],
 
     template: "mono",
     templateConfig: {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useBrandStore } from "@/lib/store";
@@ -12,7 +12,8 @@ import { Drawer } from "@/components/ui/Drawer";
 import { BrandlyMark } from "@/components/BrandlyMark";
 import { PublishModal } from "@/components/cms/PublishModal";
 import { useToast } from "@/components/ui/Toast";
-import { ArrowLeft, Menu, Eye, Check } from "lucide-react";
+import { SharePanel } from "@/components/cms/SharePanel";
+import { ArrowLeft, Menu, Eye, Check, Share2 } from "lucide-react";
 
 function CmsNavList({
   pathname,
@@ -69,9 +70,18 @@ export default function BrandCmsLayout({ children }: { children: React.ReactNode
   const router = useRouter();
   const notify = useToast();
   const brand = useBrandStore((s) => s.brands.find((b) => b.id === id));
+  const authUser = useBrandStore((s) => s.authUser);
   const publishBrand = useBrandStore((s) => s.publishBrand);
   const [publishOpen, setPublishOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  // Auth guard
+  useEffect(() => {
+    if (!authUser || authUser.role !== "agency") router.replace("/login/company");
+  }, [authUser, router]);
+
+  if (!authUser || authUser.role !== "agency") return null;
 
   if (!brand) {
     return (
@@ -129,6 +139,9 @@ export default function BrandCmsLayout({ children }: { children: React.ReactNode
             {CMS_NAV.flatMap((g) => g.items).find((i) => pathname.endsWith(i.slug))?.label ?? ""}
           </span>
           <div className="flex items-center gap-2">
+            <Button variant="secondary" size="sm" onClick={() => setShareOpen(true)}>
+              <Share2 size={14} /> Share
+            </Button>
             <Button variant="secondary" size="sm" onClick={() => window.open(`/preview/${id}`, "_blank")}>
               <Eye size={14} /> Preview
             </Button>
@@ -159,6 +172,7 @@ export default function BrandCmsLayout({ children }: { children: React.ReactNode
           notify("Brand published");
         }}
       />
+      <SharePanel open={shareOpen} onClose={() => setShareOpen(false)} brandId={id} />
     </div>
   );
 }

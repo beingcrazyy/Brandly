@@ -1,5 +1,10 @@
+"use client";
+
+import { ExternalLink } from "lucide-react";
+
 const AVAILABLE = [
   {
+    id: "mono",
     name: "Mono",
     bg: "#14140F",
     fg: "#F6F4EE",
@@ -7,6 +12,7 @@ const AVAILABLE = [
     description: "Hairline borders, generous whitespace, quiet confidence. Entirely sans-serif.",
   },
   {
+    id: "studio",
     name: "Studio",
     bg: "#B66A50",
     fg: "#FFFFFF",
@@ -14,6 +20,7 @@ const AVAILABLE = [
     description: "Full-bleed color blocks, elevated cards, oversized uppercase type. Vivid and confident.",
   },
   {
+    id: "atelier",
     name: "Atelier",
     bg: "#F4F0E8",
     fg: "#1D1D1B",
@@ -21,6 +28,7 @@ const AVAILABLE = [
     description: "Soft glass panels, gentle rhythm, considered spacing. Still entirely sans-serif.",
   },
   {
+    id: "field",
     name: "Field",
     bg: "#F2F3EF",
     fg: "#15181A",
@@ -28,6 +36,7 @@ const AVAILABLE = [
     description: "Hard ink borders, offset shadows in the brand's own colors, a waypoint trail rail.",
   },
   {
+    id: "dusk",
     name: "Dusk",
     bg: "#0B0B0D",
     fg: "#F2F1EE",
@@ -35,6 +44,7 @@ const AVAILABLE = [
     description: "A near-black canvas, boxy hairline cards, one bright accent color doing all the work.",
   },
   {
+    id: "summit",
     name: "Summit",
     bg: "#FAFAF7",
     fg: "#1D1D1B",
@@ -42,6 +52,7 @@ const AVAILABLE = [
     description: "No shadows, no color blocks — a serif wordmark and field-coded sections carry it.",
   },
   {
+    id: "meadow",
     name: "Meadow",
     bg: "#F6F1E7",
     fg: "#3A2E22",
@@ -60,7 +71,7 @@ export default function TemplatesPage() {
 
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {AVAILABLE.map((t, i) => (
-          <div key={t.name} className="overflow-hidden rounded-2xl border border-[#E4DFD3] bg-white">
+          <div key={t.name} className="group overflow-hidden rounded-2xl border border-[#E4DFD3] bg-white">
             <div className="flex aspect-[4/3] flex-col justify-between p-6" style={{ backgroundColor: t.bg, color: t.fg }}>
               <span className="text-[11px] tracking-[0.2em] uppercase opacity-60">
                 {String(i + 1).padStart(2, "0")} / {t.name}
@@ -71,8 +82,20 @@ export default function TemplatesPage() {
               </div>
             </div>
             <div className="p-5">
-              <h3 className="text-[15px] font-semibold text-[#14140F]">{t.name}</h3>
-              <p className="mt-1 text-[13px] text-neutral-500">{t.description}</p>
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-[15px] font-semibold text-[#14140F]">{t.name}</h3>
+                  <p className="mt-1 text-[13px] text-neutral-500">{t.description}</p>
+                </div>
+              </div>
+              <a
+                href={`/preview/template/${t.id}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex items-center gap-1.5 rounded-xl border border-[#E4DFD3] px-3 py-1.5 text-[12px] font-medium text-neutral-600 transition-colors hover:border-[#14140F] hover:text-[#14140F]"
+              >
+                <ExternalLink size={12} /> Preview
+              </a>
             </div>
           </div>
         ))}
